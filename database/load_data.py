@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from sqlalchemy import create_engine, text
+from fastapi.responses import JSONResponse
 import sqlalchemy as db
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
@@ -7,6 +8,23 @@ import pandas as pd
 app = FastAPI()
 
 def process_data(df):
+
+    """
+    Esta función se utiliza para procesar los datos antes de entrenar el modelo.
+    La función normaliza los datos utilizando la clase StandardScaler y reemplaza 
+    los valores faltantes por la media de cada variable.
+    
+    Parámetros:
+    -----------
+    df : Pandas DataFrame
+        Los datos de entrenamiento.
+    
+    Retorno:
+    -------
+    df_norm : Pandas DataFrame
+        Los datos de entrenamiento normalizados.
+    """
+    
     #Cambiamos los valores nan por la media de cada variable
     df.fillna(df.mean())
 
@@ -26,6 +44,24 @@ def process_data(df):
 
 
 def create_db(data):
+
+    """
+    Esta función se utiliza para crear y cargar los datos de entrenamiento desde una base de datos MySQL. 
+    
+    Parámetros:
+    -----------
+    data : str
+        El nombre de la tabla que contiene los datos de entrenamiento.
+        
+    Retorno:
+    -------
+    df_db : Pandas DataFrame
+        Los datos de entrenamiento cargados desde la base de datos.
+        
+    Excepciones:
+    ------------
+    HTTPException: si la tabla especificada no existe en la base de datos.
+    """
 
     if data == 'covertype_data':
 
@@ -57,12 +93,12 @@ def create_db(data):
     else:
         raise HTTPException(status_code=500, detail="Unkown dataset: "+data)
 
-
 @app.get('/train_model')
 def load_database():
     try:
         data = 'covertype_data'
         df_db = create_db(data)
+        return JSONResponse(content=df_db.to_json(orient='records'))
   
     except:
         raise HTTPException(status_code=500, detail="Unkown dataset: "+data)

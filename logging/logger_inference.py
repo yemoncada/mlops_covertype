@@ -37,6 +37,10 @@ class CoverType(Base):
 
 @app.get("/save_inferences")
 async def save_log_inference():
+    """
+    This function retrieves all the inference data saved in the 'covertype_data_inference' table
+    and saves it in a JSON file at the path '/database/data/cover_type_inferences.json'.
+    """
     db = SessionLocal()
     results = db.query(CoverType).all()
 
@@ -58,15 +62,13 @@ async def save_log_inference():
             "Cover_Type": result.Cover_Type
         })
         
-        # Convertir la lista de registros en formato JSON
-        cover_data_json = json.dumps(cover_data)
+    # Convertir la lista de registros en formato JSON
+    cover_data_json = json.dumps(cover_data)
 
-        # Guardar los registros en un archivo
-
-        json_path = "/database/data/cover_type_inferences.json"
-        #json_path = "cover_data.json"
-
-        with open(json_path, "w") as f:
-            f.write(cover_data_json)
+    # Guardar los registros en un archivo
+    json_path = "/database/data/cover_type_inferences.json"
+    #json_path = "cover_data.json"
+    with open(json_path, "w") as f:
+        f.write(cover_data_json)
 
     return {"cover_type_data": cover_data}
