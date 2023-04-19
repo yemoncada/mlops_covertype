@@ -1,0 +1,8 @@
+sqlalchemy==1.1.1
+scikit-learn==1.2.1
+pymysql
+fastapi
+uvicorn
+pandas
+requests
+seaborn

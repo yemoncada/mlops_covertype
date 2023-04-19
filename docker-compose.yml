@@ -1,0 +1,131 @@
+version: "3"
+
+services:
+  db:
+    image: mysql:8.0
+    cap_add:
+      - SYS_NICE
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: covertype_db
+      MYSQL_ROOT_PASSWORD: 98Microne$
+    ports:
+      - "3306:3306"
+    networks:
+      - db_train
+    volumes:
+      - db:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  load_database:
+    build:
+      context: ./database
+    depends_on:
+      - db
+    environment:
+      - USER_DB=root
+      - PASS_DB=db_train
+      - IP_SERVER=db
+      - NAME_DB=db_X
+    ports:
+      - '8502:8502'
+    networks:
+      - db_train
+    volumes:
+      - train_data:/database/data
+
+  train_model:
+    build:
+      context: ./train
+    depends_on:
+      - db
+      - load_database
+    environment:
+      - USER_DB=root
+      - PASS_DB=db_train
+      - IP_SERVER=db
+      - NAME_DB=db_X
+    ports:
+      - '8503:8503'
+    networks:
+      - db_train
+      - training
+    volumes:
+      - model:/train/models
+
+  inference:
+    build:
+      context: ./inference
+    depends_on:
+      - db
+      - load_database
+      - train_model
+    environment:
+      - USER_DB=root
+      - PASS_DB=db_train
+      - IP_SERVER=db
+      - NAME_DB=db_z
+    ports:
+      - '8504:8504'
+    networks:
+      - db_train
+      - training
+    volumes:
+      - model:/train/models
+
+  logging:
+    build:
+      context: ./logging
+    depends_on:
+      - db
+      - load_database
+      - train_model
+      - inference
+    environment:
+      - USER_DB=root
+      - PASS_DB=db_train
+      - IP_SERVER=db
+      - NAME_DB=db_z
+    ports:
+      - '8505:8505'
+    networks:
+      - db_train
+      - training
+    volumes:
+      - train_data:/database/data
+
+
+volumes:
+  db:
+    driver: local
+  train_data:
+    driver: local
+  model:
+    driver: local
+
+networks:
+  db_train:
+    external: true
+  training:
+    external: true
+
+  # api:
+  #   image: penguin-api:latest
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     DATABASE_URL: mysql+pymysql://root:98Microne$@db:3307/penguin_db
+  #   volumes:
+  #     - ./weights:/app/weights
+    
+  # inference:
+  #   image: inference-penguin-api:latest
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - api
+  #   volumes:
+  #     - ./weights:/app/weights
