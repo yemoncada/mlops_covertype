@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
-    kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/ --volumes hostPath
+    kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/
     kompose.version: 1.28.0 (c4137012e)
   creationTimestamp: null
   labels:
@@ -18,7 +18,7 @@ spec:
   template:
     metadata:
       annotations:
-        kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/ --volumes hostPath
+        kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/
         kompose.version: 1.28.0 (c4137012e)
       creationTimestamp: null
       labels:
@@ -35,7 +35,7 @@ spec:
               value: db_train
             - name: USER_DB
               value: root
-          image: yemoncad/mlops_covertype-app:appt3
+          image: yemoncad/mlops_covertype-app:appt4
           name: app
           ports:
             - containerPort: 8506
@@ -47,10 +47,10 @@ spec:
               name: model
       restartPolicy: Always
       volumes:
-        - hostPath:
-            path: /home/estudiante/mlops_covertype
-          name: train-data
-        - hostPath:
-            path: /home/estudiante/mlops_covertype
-          name: model
+        - name: train-data
+          persistentVolumeClaim:
+            claimName: train-data
+        - name: model
+          persistentVolumeClaim:
+            claimName: model
 status: {}

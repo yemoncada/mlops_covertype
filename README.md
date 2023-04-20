@@ -1,19 +1,29 @@
 # Despliegue Modelo con Dataset de Penguins
 
-Este proyecto proporciona una `API` para la clasificación del dataset de `Pengüins` basada en datos de características de pingüinos. Se utiliza SQLAlchemy para conectarse a una base de datos MySQL, y carga los datos del conjunto de datos `penguins` de Seaborn datasets. Luego, los datos se limpian y se insertan en la base de datos en la tabla `penguins`.
+Este proyecto presenta una aplicación integral de procesamiento y análisis de datos utilizando Streamlit, una plataforma de desarrollo rápido para aplicaciones web basadas en Python. La aplicación se centra en la implementación de servicios que permiten cargar información desde archivos de texto plano hacia bases de datos, entrenar modelos de inteligencia artificial, realizar inferencias con modelos previamente entrenados, almacenar información utilizada en el proceso de inferencia en archivos de texto plano y ofrecer una interfaz gráfica interactiva para facilitar la interacción con estos servicios.
 
-La aplicación también define un modelo de clasificación RandomForest utilizando la biblioteca Scikit-learn. El modelo se entrena con los datos de penguins de la base de datos y luego se guarda en un archivo utilizando la biblioteca joblib.
+La aplicación ha sido desarrollada en Python, aprovechando sus capacidades de procesamiento de datos, entrenamiento e inferencia de modelos de inteligencia artificial. Se ha utilizado FastAPI para construir una API REST que sirva como interfaz entre los servicios y la aplicación de Streamlit. Además, se ha empleado Docker y Docker Compose para construir y gestionar contenedores que soporten los servicios y faciliten su despliegue en un entorno local o en la nube.
+
+Con el objetivo de llevar la aplicación a un entorno productivo y garantizar su escalabilidad y resiliencia, se ha optado por utilizar Kubernetes como plataforma de orquestación de contenedores. Esto permite el despliegue automático, ajuste a escala y manejo de aplicaciones basadas en contenedores de manera eficiente y segura.
 
 
 # Table of contents
 
 - [Requisitos](#requisitos)
+- [Instalación](#instalacion)
 - [Uso](#uso)
+- [Despliegue en Kubernets con Kompose](#despliegue)
 - [Estructura del Proyecto](#estructura-proyecto)
 
 # Requisitos
 
 [(Back to top)](#table-of-contents)
+
+* Python 3.7+
+* Docker
+* Docker Compose
+* Kompose
+* Microk8s
 
 Para ejecutar este proyecto, necesitará tener Docker y docker-compose instalados en su sistema.
 
@@ -35,7 +45,7 @@ Para ejecutar la API de clasificación de pingüinos, siga los siguientes pasos:
 1. Clonar el repositorio:
 
 ```sh
-    git clone https://github.com/yemoncad/mlops_docker_compose.git
+    git clone https://github.com/yemoncad/mlops_covertype.git
 ```
 
 2. Acceder al directorio del repositorio:
@@ -44,30 +54,71 @@ Para ejecutar la API de clasificación de pingüinos, siga los siguientes pasos:
     cd mlops_docker_compose
 ```
 
+3. Instale Kompose
+
+```sh
+# Linux
+curl -L https://github.com/kubernetes/kompose/releases/download/v1.24.0/kompose-linux-amd64 -o kompose
+chmod +x kompose
+sudo mv ./kompose /usr/local/bin/kompose
+```
+
+4. Instale Microk8s
+
+```sh
+# Linux (Ubuntu)
+sudo snap install microk8s --classic
+```
+
 3. Construir y ejecutar los contenedores de Docker utilizando docker-compose:
 
 ```sh
     docker-compose up --build
 ```
 
-La API estará disponible en `http://localhost:8000`. Para realizar inferencias con el modelo entrenado, utilice la API de inferencia, que estará disponible en `http://localhost:8001`.
+Las APIs estaran disponibles en `http://localhost:8000`. Para realizar inferencias con el modelo entrenado, utilice la API de inferencia, que estará disponible en `http://localhost:8001`.
 
-# Estructura del Proyecto
 
-[(Back to top)](#table-of-contents)
+# Despliegue en Kubernets con Kompose
 
-El proyecto consta de tres servicios de Docker:
+1. Convierta los archivos de Docker Compose a archivos de Kubernetes con Kompose:
 
-* db: un contenedor de MySQL utilizado para almacenar los datos de pingüinos.
-* api: un contenedor de FastAPI utilizado para entrenar el modelo de clasificación de bosques aleatorios y exponer una API para realizar predicciones.
-* inference: un contenedor de FastAPI utilizado para realizar inferencias utilizando el modelo de clasificación previamente entrenado.
+```sh
+    kompose convert -f docker-compose.yml -o komposefiles/
+```
 
-El archivo `docker-compose.yaml` se encarga de configurar y ejecutar los contenedores Docker necesarios para el proyecto. Los archivos `requirements.txt`, `Dockerfile` y `Dockerfile.inference` se utilizan para construir los contenedores de Docker.
+2. Inicie MicroK8s:
 
-El proyecto también contiene los siguientes archivos:
+```sh
+    sudo microk8s start
+```
 
-* train.py: un script de Python utilizado para entrenar el modelo de clasificación de bosques aleatorios.
-* app/penguin_api.py: un archivo Python que define la API de clasificación de pingüinos utilizando FastAPI.
-* app/penguin_inference.py: un archivo Python que define la API de inferencia utilizando FastAPI.
-* weights/model.joblib: el archivo de pesos del modelo de clasificación con Random Forest.
+3. Aplique los archivos generados de kubernetes generados:
 
+```sh
+sudo microk8s kubectl apply -f komposefiles/
+```
+
+4. Verifique el estado de los pods:
+
+```sh
+sudo microk8s kubectl get pods -o wide
+```
+
+5. Exponga el servicio de la aplicación en su dirección IP local:
+
+```sh
+sudo microk8s kubectl port-forward --address 0.0.0.0 service/app 8506:8506
+```
+
+6. Visualización grafica del despliegue
+
+```sh
+sudo microk8s dashboard-proxy
+```
+
+7. limpieza de los recursos de kubernets
+
+```sh
+sudo microk8s kubectl delete --all daemonsets,replicasets,services,deployments,pods,rc,ingress --namespace=default
+```

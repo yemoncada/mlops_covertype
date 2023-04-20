@@ -14,7 +14,7 @@ connection_string = "mysql+pymysql://" + os.environ["USER_DB"] + ":" + os.enviro
 engine = create_engine(connection_string)
 
 if not database_exists(engine.url):
-    raise HTTPException(status_code=500, detail="La Base de Datos no Existe")
+    print("[INFO] La Base de Datos no Existe")
 
 # Definición de la sesión
 SessionLocal = sessionmaker(bind=engine)

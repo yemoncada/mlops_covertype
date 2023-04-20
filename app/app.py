@@ -23,17 +23,21 @@ def create_header():
     st.markdown(
         """
         <br><br/>
-        Galaxy Zoo DECaLS includes deep learning classifications for all galaxies.
-        Our model learns from volunteers and predicts posteriors for every Galaxy Zoo question.
-        Explore the predictions using the filters on the left. Do you agree with the model?
-        To read more about how the model works, click below.
+        La siguiente aplicación proporciona una solución completa para el procesamiento y análisis de datos utilizando
+        Streamlit, Python, Docker y Kubernetes, ofreciendo una experiencia de usuario interactiva y una infraestructura robusta
+        y escalable para garantizar un rendimiento óptimo en entornos productivos.
+
+        La aplicación se centra en la implementación de servicios que permiten cargar información desde archivos de texto plano
+        hacia bases de datos, entrenar modelos de inteligencia artificial, realizar inferencias con modelos previamente entrenados, 
+        almacenar información utilizada en el proceso de inferencia en archivos de texto plano y ofrecer una interfaz gráfica interactiva 
+        para facilitar la interacción con estos servicios.
         """
         , unsafe_allow_html=True)
 
     st.markdown('---')
 
 def create_sidebar():
-    st.sidebar.markdown('# Choose Your Galaxies')
+    st.sidebar.markdown('# MLops Javeriana')
 
     option = st.sidebar.selectbox(
         'Seleccione el proceso que desee realizar',

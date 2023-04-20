@@ -1,13 +1,14 @@
 from fastapi import FastAPI, HTTPException
 from joblib import load
 
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from typing import List
 from sqlalchemy_utils import database_exists, create_database
 
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 import os
@@ -66,7 +67,6 @@ class CoverTypeCreate(BaseModel):
     Hillshade_9am: int
     Hillshade_Noon: int
     Horizontal_Distance_To_Fire_Points: int
-
 
 @app.delete("/delete_data_inference/")
 def delete_cover_type_data():
@@ -128,9 +128,17 @@ async def predict_model(cover: CoverTypeCreate, model:str='covertype_data'):
     if not os.path.isfile(model_path):
         raise HTTPException(status_code=500, detail="Unkown model: "+ model+" Try to train model first.")
 
+    data = pd.DataFrame([cover.dict()])
+
+    # Instanciar la clase StandardScaler
+    scaler = StandardScaler()
+
+    #normalizamos el dataframe
+    X_norm = pd.DataFrame(scaler.fit_transform(data), columns=data.columns)
+
     # Load the trained model and perform the prediction on the input data
     model_loaded = load(model_path)
-    prediction = model_loaded.predict(pd.DataFrame([cover.dict()]))[0]
+    prediction = model_loaded.predict(X_norm)[0]
 
     # Add the input data and prediction result to the database
     db = SessionLocal()
