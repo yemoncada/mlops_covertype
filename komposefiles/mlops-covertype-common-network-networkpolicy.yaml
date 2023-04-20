@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  creationTimestamp: null
+  name: mlops-covertype-common-network
+spec:
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              io.kompose.network/mlops-covertype-common-network: "true"
+  podSelector:
+    matchLabels:
+      io.kompose.network/mlops-covertype-common-network: "true"

@@ -1,8 +1,8 @@
-version: "3"
+version: "3.8"
 
 services:
   db:
-    image: mysql:8.0
+    image: mysql:latest
     cap_add:
       - SYS_NICE
     restart: always
@@ -13,14 +13,14 @@ services:
     ports:
       - "3306:3306"
     networks:
-      - db_train
+      - common_network
     volumes:
-      - db:/var/lib/mysql
-      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
-
-  load_database:
+      - db:/var/lib/minesql
+    
+  load-database:
     build:
       context: ./database
+    image: yemoncad/mlops_covertype-database:dbt1
     depends_on:
       - db
     environment:
@@ -31,16 +31,17 @@ services:
     ports:
       - '8502:8502'
     networks:
-      - db_train
+      - common_network
     volumes:
       - train_data:/database/data
 
-  train_model:
+  train-model:
     build:
       context: ./train
+    image: yemoncad/mlops_covertype-train_model:traint1
     depends_on:
       - db
-      - load_database
+      - load-database
     environment:
       - USER_DB=root
       - PASS_DB=db_train
@@ -49,18 +50,18 @@ services:
     ports:
       - '8503:8503'
     networks:
-      - db_train
-      - training
+      - common_network
     volumes:
       - model:/train/models
 
   inference:
     build:
       context: ./inference
+    image: yemoncad/mlops_covertype-inference:inferencet1
     depends_on:
       - db
-      - load_database
-      - train_model
+      - load-database
+      - train-model
     environment:
       - USER_DB=root
       - PASS_DB=db_train
@@ -69,18 +70,18 @@ services:
     ports:
       - '8504:8504'
     networks:
-      - db_train
-      - training
+      - common_network
     volumes:
       - model:/train/models
 
   logging:
     build:
       context: ./logging
+    image: yemoncad/mlops_covertype-logging:loggingt1
     depends_on:
       - db
-      - load_database
-      - train_model
+      - load-database
+      - train-model
       - inference
     environment:
       - USER_DB=root
@@ -90,18 +91,18 @@ services:
     ports:
       - '8505:8505'
     networks:
-      - db_train
-      - training
+      - common_network
     volumes:
       - train_data:/database/data
 
   app:
     build:
       context: ./app
+    image: yemoncad/mlops_covertype-app:appt2
     depends_on:
       - db
-      - load_database
-      - train_model
+      - load-database
+      - train-model
       - inference
       - logging
     environment:
@@ -112,8 +113,7 @@ services:
     ports:
       - '8506:8506'
     networks:
-      - db_train
-      - training
+      - common_network
     volumes:
       - train_data:/database/data
       - model:/train/models
@@ -127,7 +127,5 @@ volumes:
     driver: local
 
 networks:
-  db_train:
-    external: true
-  training:
-    external: true
+  common_network:
+    driver: bridge

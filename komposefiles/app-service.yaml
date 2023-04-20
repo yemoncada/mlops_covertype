@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/ --volumes hostPath
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: app
+  name: app
+spec:
+  ports:
+    - name: "8506"
+      port: 8506
+      targetPort: 8506
+  selector:
+    io.kompose.service: app
+status:
+  loadBalancer: {}

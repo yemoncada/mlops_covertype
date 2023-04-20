@@ -5,7 +5,7 @@ import requests
 
 def set_page_config():
     st.set_page_config(
-        page_title="Kubernets Deployment",
+        page_title="Kubernets Deployments",
         page_icon="🧊",
         layout="wide",
         initial_sidebar_state="expanded",
@@ -15,7 +15,6 @@ def set_page_config():
             'About': "Kubernets APP Deployment"
         }
     )
-
 
 def create_header():
     st.title('Despliegue Kubernets (CoverType Dataset)')
@@ -44,7 +43,7 @@ def create_sidebar():
 
 def procesar_informacion():
 
-    base_url = "http://load_database:8502"
+    base_url = "http://load-database:8502"
 
     if st.button('Cargar Base de Datos'):
         with st.spinner('Wait for it...'):
@@ -57,7 +56,7 @@ def procesar_informacion():
                 st.write(f"Ocurrió un error. Código de estado: {response.status_code}")
 
 def entrenamiento_modelo():
-    base_url = "http://train_model:8503"
+    base_url = "http://train-model:8503"
 
     if st.button('Entrenar Modelo'):
         with st.spinner('Wait for it...'):
@@ -146,7 +145,6 @@ def almacenar_informacion():
             mime="application/json",
             data=json_data,
         )
-
 
 def main():
     set_page_config()

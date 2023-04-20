@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/ --volumes hostPath
+    kompose.version: 1.28.0 (c4137012e)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: load-database
+  name: load-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: load-database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert -f docker-compose.yml -o komposefiles/ --volumes hostPath
+        kompose.version: 1.28.0 (c4137012e)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/mlops-covertype-common-network: "true"
+        io.kompose.service: load-database
+    spec:
+      containers:
+        - env:
+            - name: IP_SERVER
+              value: db
+            - name: NAME_DB
+              value: db_X
+            - name: PASS_DB
+              value: db_train
+            - name: USER_DB
+              value: root
+          image: yemoncad/mlops_covertype-database:dbt1
+          name: load-database
+          ports:
+            - containerPort: 8502
+          resources: {}
+          volumeMounts:
+            - mountPath: /database/data
+              name: train-data
+      restartPolicy: Always
+      volumes:
+        - hostPath:
+            path: /home/estudiante/mlops_covertype
+          name: train-data
+status: {}
