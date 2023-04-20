@@ -1,4 +1,4 @@
-# Despliegue Modelo con Dataset de Penguins
+# Despliegue Modelo con Dataset de CoverType
 
 Este proyecto presenta una aplicación integral de procesamiento y análisis de datos utilizando Streamlit, una plataforma de desarrollo rápido para aplicaciones web basadas en Python. La aplicación se centra en la implementación de servicios que permiten cargar información desde archivos de texto plano hacia bases de datos, entrenar modelos de inteligencia artificial, realizar inferencias con modelos previamente entrenados, almacenar información utilizada en el proceso de inferencia en archivos de texto plano y ofrecer una interfaz gráfica interactiva para facilitar la interacción con estos servicios.
 
