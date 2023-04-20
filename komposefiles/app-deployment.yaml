@@ -35,7 +35,7 @@ spec:
               value: db_train
             - name: USER_DB
               value: root
-          image: yemoncad/mlops_covertype-app:appt2
+          image: yemoncad/mlops_covertype-app:appt3
           name: app
           ports:
             - containerPort: 8506

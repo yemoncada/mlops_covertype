@@ -20,7 +20,7 @@ services:
   load-database:
     build:
       context: ./database
-    image: yemoncad/mlops_covertype-database:dbt1
+    image: yemoncad/mlops_covertype-database:dbt2
     depends_on:
       - db
     environment:
@@ -38,7 +38,7 @@ services:
   train-model:
     build:
       context: ./train
-    image: yemoncad/mlops_covertype-train_model:traint1
+    image: yemoncad/mlops_covertype-train_model:traint2
     depends_on:
       - db
       - load-database
@@ -57,7 +57,7 @@ services:
   inference:
     build:
       context: ./inference
-    image: yemoncad/mlops_covertype-inference:inferencet1
+    image: yemoncad/mlops_covertype-inference:inferencet2
     depends_on:
       - db
       - load-database
@@ -77,7 +77,7 @@ services:
   logging:
     build:
       context: ./logging
-    image: yemoncad/mlops_covertype-logging:loggingt1
+    image: yemoncad/mlops_covertype-logging:loggingt2
     depends_on:
       - db
       - load-database
@@ -98,7 +98,7 @@ services:
   app:
     build:
       context: ./app
-    image: yemoncad/mlops_covertype-app:appt2
+    image: yemoncad/mlops_covertype-app:appt3
     depends_on:
       - db
       - load-database

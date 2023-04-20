@@ -30,12 +30,12 @@ spec:
             - name: IP_SERVER
               value: db
             - name: NAME_DB
-              value: db_X
+              value: covertype_db_X
             - name: PASS_DB
-              value: db_train
+              value: covertype_db
             - name: USER_DB
               value: root
-          image: yemoncad/mlops_covertype-train_model:traint1
+          image: yemoncad/mlops_covertype-train_model:traint2
           name: train-model
           ports:
             - containerPort: 8503

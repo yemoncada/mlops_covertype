@@ -32,7 +32,7 @@ spec:
             - name: MYSQL_DATABASE
               value: covertype_db
             - name: MYSQL_ROOT_PASSWORD
-              value: 98Microne$
+              value: covertype_db
           image: mysql:latest
           name: db
           ports:

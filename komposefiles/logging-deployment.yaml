@@ -30,12 +30,12 @@ spec:
             - name: IP_SERVER
               value: db
             - name: NAME_DB
-              value: db_z
+              value: covertype_db_z
             - name: PASS_DB
-              value: db_train
+              value: covertype_db
             - name: USER_DB
               value: root
-          image: yemoncad/mlops_covertype-logging:loggingt1
+          image: yemoncad/mlops_covertype-logging:loggingt2
           name: logging
           ports:
             - containerPort: 8505
