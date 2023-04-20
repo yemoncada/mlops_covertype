@@ -1,20 +1,20 @@
 import json
+import os
 from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
+from sqlalchemy_utils import database_exists
 from sqlalchemy import create_engine, Column, Integer
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 app = FastAPI()
 
-database_username = 'root'
-database_password = 'topicosIA'
-database_host = '10.43.102.112'
-database_port = '3306'
-database_name = 'database_z'
-
 # Conexión a la base de datos
-connection_string = f"mysql+pymysql://{database_username}:{database_password}@{database_host}:{database_port}/{database_name}"
+connection_string = "mysql+pymysql://" + os.environ["USER_DB"] + ":" + os.environ["PASS_DB"] + "@" + os.environ["IP_SERVER"] + "/" + os.environ["NAME_DB"]
 engine = create_engine(connection_string)
+
+if not database_exists(engine.url):
+    raise HTTPException(status_code=500, detail="La Base de Datos no Existe")
 
 # Definición de la sesión
 SessionLocal = sessionmaker(bind=engine)

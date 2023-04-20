@@ -1,7 +1,7 @@
 FROM python:3.9
 
-RUN mkdir /train
-WORKDIR /train
+RUN mkdir /dataset
+WORKDIR /dataset
 COPY . .
 
 RUN python -m pip install --upgrade pip

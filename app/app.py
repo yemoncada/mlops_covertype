@@ -47,7 +47,7 @@ def procesar_informacion():
 
     if st.button('Cargar Base de Datos'):
         with st.spinner('Wait for it...'):
-            response = requests.get(f"{base_url}/train_model")
+            response = requests.get(f"{base_url}/load_data")
             if response.status_code == 200:
                 st.success('La base de Datos ha sido Creada y Cargada!', icon="✅")
                 df = pd.read_json(response.json(), orient='records')

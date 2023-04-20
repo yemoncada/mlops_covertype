@@ -14,14 +14,8 @@ import os
 
 app = FastAPI()
 
-database_username = 'root'
-database_password = 'topicosIA'
-database_host = '10.43.102.112'
-database_port = '3306'
-database_name = 'database_z'
-
 # Create a connection string using the database credentials
-connection_string = f"mysql+pymysql://{database_username}:{database_password}@{database_host}:{database_port}/{database_name}"
+connection_string = "mysql+pymysql://" + os.environ["USER_DB"] + ":" + os.environ["PASS_DB"] + "@" + os.environ["IP_SERVER"] + "/" + os.environ["NAME_DB"]
 
 # Create an engine using the connection string
 engine = create_engine(connection_string)

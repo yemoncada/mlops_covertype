@@ -9,7 +9,7 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_DATABASE: covertype_db
-      MYSQL_ROOT_PASSWORD: 98Microne$
+      MYSQL_ROOT_PASSWORD: covertype_db
     ports:
       - "3306:3306"
     networks:
@@ -25,9 +25,9 @@ services:
       - db
     environment:
       - USER_DB=root
-      - PASS_DB=db_train
+      - PASS_DB=covertype_db
       - IP_SERVER=db
-      - NAME_DB=db_X
+      - NAME_DB=covertype_db_X
     ports:
       - '8502:8502'
     networks:
@@ -44,9 +44,9 @@ services:
       - load-database
     environment:
       - USER_DB=root
-      - PASS_DB=db_train
+      - PASS_DB=covertype_db
       - IP_SERVER=db
-      - NAME_DB=db_X
+      - NAME_DB=covertype_db_X
     ports:
       - '8503:8503'
     networks:
@@ -64,9 +64,9 @@ services:
       - train-model
     environment:
       - USER_DB=root
-      - PASS_DB=db_train
+      - PASS_DB=covertype_db
       - IP_SERVER=db
-      - NAME_DB=db_z
+      - NAME_DB=covertype_db_z
     ports:
       - '8504:8504'
     networks:
@@ -85,9 +85,9 @@ services:
       - inference
     environment:
       - USER_DB=root
-      - PASS_DB=db_train
+      - PASS_DB=covertype_db
       - IP_SERVER=db
-      - NAME_DB=db_z
+      - NAME_DB=covertype_db_z
     ports:
       - '8505:8505'
     networks:

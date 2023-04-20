@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 
 import sqlalchemy as db
 from sqlalchemy import create_engine, text
+from sqlalchemy_utils import database_exists, create_database
 
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -44,16 +45,12 @@ def train_model():
         JSON object containing the accuracy of the trained model and a message.
     """
 
-    # Configuration of the database
-    database_username = 'root'
-    database_password = 'topicosIA'
-    database_host = '10.43.102.112'
-    database_port = '3306'
-    database_name = 'topicosIA'
-
     # Connection to the database
-    connection_string = f"mysql+pymysql://{database_username}:{database_password}@{database_host}:{database_port}/{database_name}"
+    connection_string = "mysql+pymysql://" + os.environ["USER_DB"] + ":" + os.environ["PASS_DB"] + "@" + os.environ["IP_SERVER"] + "/" + os.environ["NAME_DB"]
     engine = create_engine(connection_string)
+
+    if not database_exists(engine.url):
+        raise HTTPException(status_code=500, detail="La base de Datos no Existe")
 
     # Read data from the database table 'covertype_data'
     with engine.connect() as conn:

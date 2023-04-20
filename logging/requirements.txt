@@ -3,4 +3,5 @@ uvicorn>=0.15.0,<0.16.0
 SQLAlchemy==1.4.47
 pymysql>=1.0.2
 mysql-connector-python==8.0.32
+SQLAlchemy-Utils==0.40.0
 cryptography
